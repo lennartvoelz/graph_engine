@@ -57,7 +57,7 @@ jobs:
     - name: Install Conan dependencies
       run: |
         cd build
-        conan install .. -of . --profile=~/.conan2/profiles/clang-ci --build=missing
+        conan install .. -of . --profile=clang-ci --build=missing
     
     - name: Configure CMake
       run: |
