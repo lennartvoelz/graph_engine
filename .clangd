@@ -1,0 +1,14 @@
+CompileFlags:
+  Add:
+    - "-std=c++23"
+    - "-Wall"
+    - "-Wextra"
+Diagnostics:
+  ClangTidy:
+    Add:
+      - 'readability-*'
+      - 'modernize-*'
+      - 'performance-*'
+      - 'bugprone-*'
+    Remove:
+      - 'readability-magic-numbers'

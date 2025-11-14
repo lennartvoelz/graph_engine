@@ -1,3 +1,6 @@
+# Excludes
+build/
+
 # Prerequisites
 *.d
 

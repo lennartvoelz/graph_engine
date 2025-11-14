@@ -1,0 +1,14 @@
+---
+Checks: >
+  -*,
+  readability-*,
+  modernize-*,
+  performance-*,
+  bugprone-*,
+  clang-analyzer-*,
+  -readability-magic-numbers,
+  -readability-uppercase-literal-suffix
+
+WarningsAsErrors: '*'
+HeaderFilterRegex: '(src|include)/(.*)'
+AnalyzeTemporaryDtors: true

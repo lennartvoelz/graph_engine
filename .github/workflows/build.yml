@@ -1,0 +1,72 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          clang-18 \
+          clang-format-18 \
+          clang-tidy-18 \
+          cmake \
+          ninja-build \
+          python3-pip
+    
+    - name: Install Conan
+      run: pip install conan
+    
+    - name: Create Conan profile
+      run: conan profile detect --force
+    
+    - name: Setup Clang profile
+      run: |
+        cat > ~/.conan2/profiles/clang-ci <<EOF
+        [settings]
+        arch=x86_64
+        build_type=${{ matrix.build_type }}
+        compiler=clang
+        compiler.version=18
+        compiler.libcxx=libstdc++11
+        compiler.cppstd=23
+        os=Linux
+        
+        [conf]
+        tools.build:compiler_executables={"c": "/usr/bin/clang-18", "cpp": "/usr/bin/clang++-18"}
+        EOF
+    
+    - name: Create build directory
+      run: mkdir -p build
+    
+    - name: Install Conan dependencies
+      run: |
+        cd build
+        conan install .. -of . --profile=~/.conan2/profiles/clang-ci --build=missing
+    
+    - name: Configure CMake
+      run: |
+        cd build
+        cmake .. \
+          -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake \
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+          -GNinja
+    
+    - name: Build
+      run: |
+        cd build

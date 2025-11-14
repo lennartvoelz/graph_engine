@@ -1,0 +1,15 @@
+---
+Language: Cpp
+BasedOnStyle: LLVM
+IndentWidth: 4
+UseTab: ForIndentation
+TabWidth: 4
+IndentAccessModifiers: false
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: true
+AllowShortLoopsOnASingleLine: false
+BreakBeforeBraces: Allman
+AccessModifierOffset: -4
+NamespaceIndentation: All
+SortIncludes: true
+IncludeBlocks: Reorder
