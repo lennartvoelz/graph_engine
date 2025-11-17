@@ -1,5 +1,7 @@
 # Excludes
 build/
+CMakeUserPresets.json
+.cache/
 
 # Prerequisites
 *.d

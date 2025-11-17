@@ -1,6 +1,10 @@
 CompileFlags:
+  Compiler: /usr/bin/clang++-20
+  CompilationDatabase: build/Release
   Add:
     - "-std=c++23"
+    - "-stdlib=libc++"
+    - "-fPIC"
     - "-Wall"
     - "-Wextra"
 Diagnostics:

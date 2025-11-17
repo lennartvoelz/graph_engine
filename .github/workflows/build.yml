@@ -22,9 +22,9 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y \
-          clang-18 \
-          clang-format-18 \
-          clang-tidy-18 \
+          clang-20 \
+          clang-format-20 \
+          clang-tidy-20 \
           cmake \
           ninja-build \
           python3-pip
@@ -48,7 +48,7 @@ jobs:
         os=Linux
         
         [conf]
-        tools.build:compiler_executables={"c": "/usr/bin/clang-18", "cpp": "/usr/bin/clang++-18"}
+        tools.build:compiler_executables={"c": "/usr/bin/clang-20", "cpp": "/usr/bin/clang++-20"}
         EOF
     
     - name: Create build directory
