@@ -1,10 +1,11 @@
 #pragma once
+#include <GraphEngine/Tensor/Tensor.hpp>
 #include <cstddef>
 #include <vector>
 
-namespace GraphEngine::Tensor {
+namespace GraphEngine {
 
-// Forward Decl.
+// Forward declaration
 template <typename T>
 class Tensor;
 
@@ -26,7 +27,6 @@ public:
 	auto data() -> pointer { return data_.data(); }
 	auto data() const -> const_pointer { return data_.data(); }
 	[[nodiscard]] auto size() const -> size_type { return size_; }
-
 	[[nodiscard]] auto is_shared() const -> bool { return shared_; }
 
 private:
@@ -37,4 +37,4 @@ private:
 	friend class Tensor<T>;
 };
 
-}  // namespace GraphEngine::Tensor
+}  // namespace GraphEngine
