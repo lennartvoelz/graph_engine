@@ -70,3 +70,4 @@ jobs:
     - name: Build
       run: |
         cd build
+        cmake --build . --config ${{ matrix.build_type }}

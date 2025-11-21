@@ -1,0 +1,76 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            clang-20 \
+            clang-format-20 \
+            clang-tidy-20 \
+            cmake \
+            ninja-build \
+            python3-pip
+
+      - name: Install Conan
+        run: pip install conan
+
+      - name: Create Conan profile
+        run: conan profile detect --force
+
+      - name: Setup Clang profile
+        run: |
+          cat > ~/.conan2/profiles/clang-ci <<EOF
+          [settings]
+          arch=x86_64
+          build_type=${{ matrix.build_type }}
+          compiler=clang
+          compiler.version=18
+          compiler.libcxx=libstdc++11
+          compiler.cppstd=23
+          os=Linux
+
+          [conf]
+          tools.build:compiler_executables={"c": "/usr/bin/clang-20", "cpp": "/usr/bin/clang++-20"}
+          EOF
+
+      - name: Create build directory
+        run: mkdir -p build
+
+      - name: Install Conan dependencies
+        run: |
+          cd build
+          conan install .. -of . --profile=clang-ci --build=missing
+
+      - name: Configure CMake
+        run: |
+          cd build
+          cmake .. \
+            -DCMAKE_TOOLCHAIN_FILE=build/${{ matrix.build_type }}/generators/conan_toolchain.cmake \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -GNinja
+
+      - name: Build
+        run: |
+          cd build
+          cmake --build . --config ${{ matrix.build_type }}
+
+      - name: Run Tests
+        run: |
+          cd build
+          ctest --output-on-failure
