@@ -3,6 +3,7 @@ find_package(GTest REQUIRED)
 add_executable(GraphEngineTests
     TestMain.cpp
     Tensor/TestStorage.cpp
+    Tensor/TestTensor.cpp
     # Add more test source files here
 )
 
