@@ -25,7 +25,9 @@ jobs:
             clang-tidy-20 \
             cmake \
             ninja-build \
-            python3-pip
+            python3-pip \
+            libc++-dev \
+            libc++abi-dev
 
       - name: Install Conan
         run: pip install conan
