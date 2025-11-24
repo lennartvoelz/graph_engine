@@ -18,7 +18,7 @@ class Tensor {
 
 public:
 	// Allocating constructor
-	explicit Tensor(std::vector<size_type> shape) : rank_(shape.size()), extents_(std::move(shape)) {
+	explicit Tensor(const std::vector<size_type>& shape) : rank_(shape.size()), extents_(shape) {
 		size_type contigouos_size{1};
 		for (const auto dim : extents_) {
 			contigouos_size *= dim;
@@ -27,8 +27,10 @@ public:
 	}
 
 	// View constructor for buffer reuse; add functionality later
-	explicit Tensor(std::shared_ptr<Storage<T>> storage, std::vector<size_type> shape)
-	    : rank_(shape.size()), storage_(storage), extents_(std::move(shape)) {}
+	explicit Tensor(std::shared_ptr<Storage<T>> storage, const std::vector<size_type>& shape)
+	    : rank_(shape.size()), storage_(storage), extents_(shape) {
+		storage_->shared_ = true;
+	}
 
 	[[nodiscard]] auto rank() const -> size_type { return rank_; }
 	[[nodiscard]] auto data() const -> pointer { return storage_->data(); }

@@ -78,3 +78,49 @@ TEST_F(TestTensorInt, ReadViaView) {
 	EXPECT_EQ(value_two_zero, 2000);
 	EXPECT_EQ(value_five_ten, 5010);
 }
+
+TEST_F(TestTensorInt, WriteViaView) {
+	const auto shape = this->largeShape;
+	const auto size = this->large_size;
+
+	GraphEngine::Tensor<int> tensor{shape};
+	auto view = tensor.view<2>();
+	// Write to element [999, 999]
+	view[999, 999] = 42;
+	// Get element in flat buffer
+	auto element = *(tensor.data() + size - 1);
+
+	EXPECT_EQ(element, 42);
+}
+
+TEST_F(TestTensorInt, MultipleViewsOnOneTensor) {
+	const auto shape = this->largeShape;
+
+	GraphEngine::Tensor<int> tensor{shape};
+	auto viewRightLayout = tensor.view<2>();
+	auto viewLeftLayout = tensor.view<2, std::layout_left>();
+
+	// Write to [0, 100] and verify on other view on [100, 0]
+	viewRightLayout[0, 100] = 42;
+	auto element = viewLeftLayout[100, 0];
+
+	EXPECT_EQ(element, 42);
+}
+
+// === Non-Allocating Constructor Tests
+
+TYPED_TEST(TestTensor, MultipleTensorsOnOneStorage) {
+	auto sharedStoragePtr = this->largeStorage;
+	const auto shape = this->largeShape;
+
+	GraphEngine::Tensor<TypeParam> tensor1(sharedStoragePtr, shape);
+	GraphEngine::Tensor<TypeParam> tensor2(sharedStoragePtr, shape);
+	auto viewTensor1 = tensor1.template view<2>();
+	auto viewTensor2 = tensor2.template view<2>();
+	// Modify via tensor/view one, and check via tensor two
+	viewTensor1[100, 100] = 42;
+	auto element = viewTensor2[100, 100];
+
+	EXPECT_EQ(element, 42);
+	EXPECT_TRUE(sharedStoragePtr->is_shared());
+}
